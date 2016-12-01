@@ -1,31 +1,69 @@
 package com.jbetfairng;
 
 import com.google.common.base.Optional;
-import com.jbetfairng.entities.*;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.jbetfairng.enums.*;
+import com.jbetfairng.entities.AccountDetailsResponse;
+import com.jbetfairng.entities.AccountFundsResponse;
+import com.jbetfairng.entities.AccountStatementReport;
+import com.jbetfairng.entities.CancelExecutionReport;
+import com.jbetfairng.entities.CancelInstruction;
+import com.jbetfairng.entities.ClearedOrderSummaryReport;
+import com.jbetfairng.entities.CompetitionResult;
+import com.jbetfairng.entities.CountryCodeResult;
+import com.jbetfairng.entities.CurrencyRate;
+import com.jbetfairng.entities.CurrentOrderSummaryReport;
+import com.jbetfairng.entities.EventResult;
+import com.jbetfairng.entities.EventTypeResult;
+import com.jbetfairng.entities.MarketBook;
+import com.jbetfairng.entities.MarketCatalogue;
+import com.jbetfairng.entities.MarketFilter;
+import com.jbetfairng.entities.MarketProfitAndLoss;
+import com.jbetfairng.entities.PlaceExecutionReport;
+import com.jbetfairng.entities.PlaceInstruction;
+import com.jbetfairng.entities.PriceProjection;
+import com.jbetfairng.entities.ReplaceExecutionReport;
+import com.jbetfairng.entities.ReplaceInstruction;
+import com.jbetfairng.entities.TimeRange;
+import com.jbetfairng.entities.TimeRangeResult;
+import com.jbetfairng.entities.TransferResponse;
+import com.jbetfairng.entities.UpdateExecutionReport;
+import com.jbetfairng.entities.UpdateInstruction;
+import com.jbetfairng.entities.VenueResult;
+import com.jbetfairng.enums.BetStatus;
+import com.jbetfairng.enums.Endpoint;
+import com.jbetfairng.enums.Exchange;
+import com.jbetfairng.enums.GroupBy;
+import com.jbetfairng.enums.IncludeItem;
+import com.jbetfairng.enums.MarketProjection;
+import com.jbetfairng.enums.MarketSort;
+import com.jbetfairng.enums.MatchProjection;
+import com.jbetfairng.enums.OrderBy;
+import com.jbetfairng.enums.OrderProjection;
+import com.jbetfairng.enums.Side;
+import com.jbetfairng.enums.SortDir;
+import com.jbetfairng.enums.TimeGranularity;
+import com.jbetfairng.enums.Wallet;
 import com.jbetfairng.exceptions.LoginException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import java.util.HashMap;
-import java.util.List;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.security.KeyStore;
-import java.security.SecureRandom;
-import java.util.Map;
-import java.util.Set;
-
-import com.google.common.reflect.TypeToken;
-import com.google.common.reflect.TypeParameter;
 
 public class BetfairClient {
 
@@ -104,13 +142,13 @@ public class BetfairClient {
     }
 
     public Boolean login(
-            String p12CertificateLocation,
+            InputStream p12CertificateStream,
             String p12CertificatePassword,
             String username,
             String password) throws LoginException {
 
-        if (Helpers.isNullOrWhitespace(p12CertificateLocation))
-            throw new IllegalArgumentException(p12CertificateLocation);
+        if (p12CertificateStream == null)
+            throw new IllegalArgumentException();
         if (Helpers.isNullOrWhitespace(p12CertificatePassword))
             throw new IllegalArgumentException(username);
         if (Helpers.isNullOrWhitespace(username))
@@ -118,11 +156,9 @@ public class BetfairClient {
         if (Helpers.isNullOrWhitespace(password))
             throw new IllegalArgumentException(password);
 
-        FileInputStream keyStream = null;
         try {
             KeyStore clientStore = KeyStore.getInstance("PKCS12");
-            keyStream = new FileInputStream(p12CertificateLocation);
-            clientStore.load(keyStream, p12CertificatePassword.toCharArray());
+            clientStore.load(p12CertificateStream, p12CertificatePassword.toCharArray());
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             kmf.init(clientStore, p12CertificatePassword.toCharArray());
@@ -169,10 +205,6 @@ public class BetfairClient {
             }
         } catch (Exception ex) {
             throw new LoginException(ex);
-        } finally {
-            try {
-                keyStream.close();
-            } catch (Exception ignore) {}
         }
     }
 
