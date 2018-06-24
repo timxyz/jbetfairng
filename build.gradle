@@ -2,6 +2,10 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
+repositories {
+    mavenCentral()
+}
+
 sourceSets {
     main {
         java {
@@ -14,14 +18,14 @@ sourceSets {
 }
 
 dependencies {
-    compile 'com.google.code.gson:gson:2.7'
-    compile 'com.google.guava:guava:19.0'
-    compile 'com.netflix.rxjava:rxjava-apache-http:0.20.7'
-    compile 'com.netflix.rxjava:rxjava-core:0.20.7'
-    compile 'joda-time:joda-time:2.7'
-    compile 'org.apache.httpcomponents:httpclient:4.3'
-    compile 'org.apache.httpcomponents:httpasyncclient:4.0'
-    compile 'org.apache.httpcomponents:httpcore-nio:4.3'
-    compile 'org.apache.logging.log4j:log4j-api:2.2'
-    compile 'org.apache.logging.log4j:log4j-core:2.2'
+    implementation 'com.google.code.gson:gson:2.7'
+    implementation 'com.google.guava:guava:19.0'
+    implementation 'com.netflix.rxjava:rxjava-apache-http:0.20.7'
+    implementation 'com.netflix.rxjava:rxjava-core:0.20.7'
+    implementation 'joda-time:joda-time:2.7'
+    implementation 'org.apache.httpcomponents:httpclient:4.3'
+    implementation 'org.apache.httpcomponents:httpasyncclient:4.0'
+    implementation 'org.apache.httpcomponents:httpcore-nio:4.3'
+    implementation 'org.apache.logging.log4j:log4j-api:2.2'
+    implementation 'org.apache.logging.log4j:log4j-core:2.2'
 }
